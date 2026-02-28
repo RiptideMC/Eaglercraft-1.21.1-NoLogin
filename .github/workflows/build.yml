@@ -1,4 +1,4 @@
-name: Build Eaglercraft 1.21.1 (Smart Build)
+name: Build Eaglercraft 1.21.1 (Maven Build)
 on: [workflow_dispatch]
 
 jobs:
@@ -13,19 +13,14 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Find and Build
+      - name: Build with Maven
         run: |
-          # 1. Find the folder containing gradlew and enter it
-          GRADLE_DIR=$(find . -name "gradlew" -printf '%h' -quit)
-          cd "$GRADLE_DIR"
-          
-          # 2. Grant permissions and start the engine
-          chmod +x gradlew
-          ./gradlew clean build --no-daemon
+          # This repo uses Maven (mvn) instead of Gradle
+          mvn clean install -DskipTests
 
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
           name: Eaglercraft-1.21-Client
-          # This grabs the build folder wherever it was created
-          path: "**/build/**"
+          # Maven usually puts the finished files in the 'target' folder
+          path: "**/target/**"
