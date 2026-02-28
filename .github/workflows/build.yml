@@ -1,4 +1,4 @@
-name: Build Eaglercraft 1.21.1 (Maven Build)
+name: Build Eaglercraft 1.21.1 (Targeted Maven)
 on: [workflow_dispatch]
 
 jobs:
@@ -15,12 +15,16 @@ jobs:
 
       - name: Build with Maven
         run: |
-          # This repo uses Maven (mvn) instead of Gradle
+          # 1. Find where the pom.xml is hiding and enter that folder
+          POM_DIR=$(find . -name "pom.xml" -printf '%h' -quit)
+          cd "$POM_DIR"
+          
+          # 2. Run the build command
           mvn clean install -DskipTests
 
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
           name: Eaglercraft-1.21-Client
-          # Maven usually puts the finished files in the 'target' folder
+          # This grabs the finished files from any 'target' folder it finds
           path: "**/target/**"
